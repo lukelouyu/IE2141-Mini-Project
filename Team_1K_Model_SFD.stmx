@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xmile version="1.0" xmlns="http://docs.oasis-open.org/xmile/ns/XMILE/v1.0" xmlns:isee="http://iseesystems.com/XMILE">
+	<header>
+		<smile version="1.0" namespace="std, isee"/>
+		<name>Latest SFD for Preparation Time</name>
+		<uuid>20325c0c-c549-4bb2-8124-4383091f5475</uuid>
+		<vendor>isee systems, inc.</vendor>
+		<product version="2.1.3" isee:build_number="2455" isee:saved_by_v1="true" lang="en">Stella Architect</product>
+	</header>
+	<sim_specs isee:sim_duration="1.5" isee:simulation_delay="0.107143" isee:restore_on_start="false" method="Euler" time_units="Weeks" isee:instantaneous_flows="false" isee:loop_scores="true" isee:loop_exhaustive_allowed="1000">
+		<start>0</start>
+		<stop>14</stop>
+		<dt reciprocal="true">4</dt>
+	</sim_specs>
+	<isee:prefs show_module_prefix="true" live_update_on_drag="true" show_restore_buttons="false" layer="model" interface_scale_ui="true" interface_max_page_width="10000" interface_max_page_height="10000" interface_min_page_width="0" interface_min_page_height="0" rerun_on_structure_change="false" saved_runs="5" keep="false" rifp="true"/>
+	<isee:multiplayer_settings include_chat="true" allow_observers="false" advance_time_increment="1" max_advance_time_in_ms="0" observer_start_page="home_page" enabled="false"/>
+	<isee:time_formats default_format="Builtin">
+		<isee:time_format name="Builtin" type="adaptive"/>
+	</isee:time_formats>
+	<default_format/>
+	<model_units>
+		<unit name="Dimensionless">
+			<eqn>1</eqn>
+			<alias>dmnl</alias>
+			<alias>unitless</alias>
+			<alias>fraction</alias>
+		</unit>
+		<unit name="Meters">
+			<eqn/>
+			<alias>m</alias>
+			<alias>meter</alias>
+		</unit>
+		<unit name="Weeks">
+			<eqn/>
+			<alias>wk</alias>
+			<alias>week</alias>
+		</unit>
+		<unit name="Minutes">
+			<eqn/>
+			<alias>min</alias>
+			<alias>minute</alias>
+		</unit>
+	</model_units>
+	<model>
+		<variables>
+			<stock name="Convenience Per\nIndividual Group">
+				<doc>Items the orchestras have parked in the shared inventory area for their own convenience, which must be moved before a rehearsal. Starts at 27 items. The more items are parked there, the faster each orchestra&apos;s convenience grows (links to both Growth of Convenience flows).</doc>
+				<eqn>27</eqn>
+				<inflow>Availability_of_Shared_Inventory_Area</inflow>
+				<non_negative/>
+				<units>items</units>
+			</stock>
+			<flow name="Availability of\nShared Inventory\nArea">
+				<doc>Items parked in the shared area for convenience each week. Orchestras only park more items while there is free space, so the inflow = 0.5 items per week for every m2 of free space (capacity - total occupancy). The fuller the area, the fewer new items are parked (the - link of B1/B2); it stops when the area is full. Starts at 0.5 x (20 - 4) = 8 items per week.</doc>
+				<eqn>MAX(0, 0.5 * (Capacity_of_Shared_Inventory_Area - Total_Occupancy_of_Shared_Inventory_Area))</eqn>
+				<non_negative/>
+				<units>items/Weeks</units>
+			</flow>
+			<aux name="Capacity of Shared Inventory Area">
+				<doc>Floor area of the shared inventory area (m2).</doc>
+				<eqn>20</eqn>
+				<units>m*m</units>
+			</aux>
+			<stock name="Convenience for Symphony Orchestra">
+				<doc>How convenient the Symphony Orchestra finds it to keep its items in the shared inventory area (0 = not at all, 1 = fully). Starts at 0.2.</doc>
+				<eqn>0.2</eqn>
+				<inflow>Growth_of_Convenience_for_Symphony_Orchestra</inflow>
+				<non_negative/>
+				<units>Items</units>
+			</stock>
+			<flow name="Growth of Convenience for Symphony Orchestra">
+				<doc>Logistic growth of the Symphony Orchestra&apos;s convenience. R2: the more space it already occupies, the more of a habit parking there becomes (first bracket); growth slows as it nears its 12 m2 maximum (second bracket). B2: it also grows faster when more items are already parked in the shared area (Convenience Per Individual Occupancy / 27, where 27 = the normal number of parked items, so the factor starts at 1); as the area fills, parking slows and so does this growth. 0.2 per week = growth rate.</doc>
+				<eqn>0.2 * (Symphony_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area / 12) * (1 - Symphony_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area / 12) * Convenience_Per_Individual_Group / 27</eqn>
+				<non_negative/>
+				<units>items/Weeks</units>
+			</flow>
+			<aux name="Symphony Orchestra's\nOccupancy\nfor Shared Inventory Area">
+				<doc>Floor area of the shared inventory area used by the Symphony Orchestra. 12 = area (m2) its items would take at full convenience (1.0).</doc>
+				<eqn>12*Convenience_for_Symphony_Orchestra</eqn>
+				<units>Itmes / Week</units>
+			</aux>
+			<stock name="Convenience for\nChinese Orchestra">
+				<doc>How convenient the Chinese Orchestra finds it to keep its items in the shared inventory area (0 = not at all, 1 = fully). Starts at 0.2.</doc>
+				<eqn>0.2</eqn>
+				<inflow>Growth_of_Convenience_for_Chinese_Orchestra</inflow>
+				<non_negative/>
+				<units>Items</units>
+			</stock>
+			<flow name="Growth of Convenience\nfor Chinese Orchestra">
+				<doc>Same logic as the Symphony Orchestra (R1 own habit, B1 through the shared area), with a smaller maximum (8 m2) and a slower growth rate (0.15 per week).</doc>
+				<eqn>0.15 * (Chinese_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area / 8) * (1 - Chinese_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area / 8) * Convenience_Per_Individual_Group / 27</eqn>
+				<non_negative/>
+				<units>items/Weeks</units>
+			</flow>
+			<aux name="Chinese Orchestra's\nOccupancy\nfor Shared Inventory Area">
+				<doc>Floor area of the shared inventory area used by the Chinese Orchestra. 8 = area (m2) its items would take at full convenience (1.0).</doc>
+				<eqn>8*Convenience_for_Chinese_Orchestra</eqn>
+				<units>Items / Week</units>
+			</aux>
+			<aux name="Total Occupancy of Shared Inventory Area">
+				<doc>Floor area of the shared inventory area occupied by both orchestras. Starts at 4 m2 and approaches 20 m2 (= Shared Area Capacity).</doc>
+				<eqn>Chinese_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area+Symphony_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area</eqn>
+				<units>m*m</units>
+			</aux>
+			<aux name="Time to Clear the\nInventory Area">
+				<doc>Minutes needed to clear the inventory area = items to move / (items per minute per helper x helpers).</doc>
+				<eqn>Convenience_Per_Individual_Group/(Speed_to_Clean_up_the_Items_Inventory_Area*Number_of_Student_Helping)</eqn>
+				<units>Minutes</units>
+			</aux>
+			<aux name="Speed to Clean up\nthe Items Inventory Area">
+				<doc>Items one helper can move out of the inventory area per minute (0.4, i.e. 2.5 min per item).</doc>
+				<eqn>0.4</eqn>
+				<units>items/min/students</units>
+			</aux>
+			<aux name="Total Preparation Time">
+				<doc>Total preparation time = time to clear the inventory area + time to clear the practice room. About 15 min in week 0, rising in a goal-seeking curve (fast at first, then levelling off) to about 45 min in week 14.</doc>
+				<eqn>Time_to_Clear_the_Inventory_Area + Time_to_Clean_up_Unattended_Items</eqn>
+				<units>Minutes</units>
+			</aux>
+			<stock name="Items Left in the Room">
+				<doc>Unattended items (chairs, stands, cases) left lying in the practice room. Starts at 12.</doc>
+				<eqn>12</eqn>
+				<inflow>Weekly_Growth_of_Unattended_Items</inflow>
+				<outflow>Weekly_Clear_of_Unattended_Items</outflow>
+				<non_negative/>
+				<units>items</units>
+			</stock>
+			<flow name="Weekly Growth of\nUnattended Items">
+				<doc>Items left behind each week (40 x 0.13 = 5.2) minus the items the helpers put back during a short tidy-up after rehearsal (2 min per week x 0.5 items per min x helpers). With 5 helpers the net is 0.2 items per week; it rises to about 0.55 as helpers drop out. MAX(0, ...) because the flow cannot be negative.</doc>
+				<eqn>MAX(0,Number_of_Items_Used-Room_Usage_Shortfall*Number_of_Student_Helping*Speed_to_Clean_up_items_in_Practice_Room)</eqn>
+				<non_negative/>
+				<units>items/Weeks</units>
+			</flow>
+			<aux name="Desired Room Space">
+				<doc>Free floor area needed to set up the ensemble for a rehearsal (m2).</doc>
+				<eqn>72</eqn>
+				<units>m*m</units>
+			</aux>
+			<aux name="Room Space Capacity">
+				<doc>Floor area of the practice room (m2).</doc>
+				<eqn>80</eqn>
+				<units>m*m</units>
+			</aux>
+			<aux name="Current Room Space Available">
+				<doc>Free floor area = room area minus the area blocked by unattended items. 1 = m2 blocked by one item. Cannot go below 0.</doc>
+				<eqn>MAX(0, Room_Space_Capacity - 1 * Items_Left_in_the_Room)</eqn>
+				<units>m*m</units>
+			</aux>
+			<aux name="Number of Items to be Cleaned up">
+				<doc>Items that must be moved to get back to the desired free space = missing space / 1 m2 per item. With 80 m2 and 72 m2 desired, 8 items can stay along the walls; every item beyond that must be moved.</doc>
+				<eqn>MAX(0, Desired_Room_Space - Current_Room_Space_Available) / 1</eqn>
+				<units>items</units>
+			</aux>
+			<aux name="Speed to Clean up\nitems in Practice Room">
+				<doc>Items one helper can clear in the practice room per minute (0.5, i.e. 2 min per item).</doc>
+				<eqn>0.5</eqn>
+				<units>items/min/students</units>
+			</aux>
+			<aux name="Time to Clean up\nUnattended Items">
+				<doc>Minutes needed to clear the practice room = items to move / (items per minute per helper x helpers).</doc>
+				<eqn>Number_of_Items_to_be_Cleaned_up / (Speed_to_Clean_up_items_in_Practice_Room * Number_of_Student_Helping)</eqn>
+				<units>Minutes</units>
+			</aux>
+			<aux name="Room Usage Shortfall">
+				<doc>Fraction of the items used that are not put back after the room is used (13%).</doc>
+				<eqn>5</eqn>
+				<units>min / week</units>
+			</aux>
+			<aux name="Number of Items Used">
+				<doc>Items taken out and used in the practice room each week.</doc>
+				<eqn>40</eqn>
+				<units>items/Weeks</units>
+			</aux>
+			<aux name="Willingness To Help">
+				<doc>Share of the original helpers who are still willing to help. It is 1 (everyone) when preparation takes the normal 15 min, and it falls by 0.0025 for every extra minute (e.g. 0.925 at 45 min), because a longer chore puts students off. MAX(0, ...) keeps it from going below 0.</doc>
+				<eqn>MAX(0, 1 - 0.0025 * (Total_Preparation_Time - 15))</eqn>
+				<units>Dimensionless</units>
+			</aux>
+			<stock name="Number of\nStudent Helping">
+				<doc>Students who help with the preparation each week. Starts at 5. It can only fall (one outflow): helpers drop out when the preparation becomes a longer chore.</doc>
+				<eqn>8</eqn>
+				<outflow>Decrease_Rate_of_Student_Helping</outflow>
+				<non_negative/>
+				<units>students</units>
+			</stock>
+			<flow name="Decrease Rate of Student Helping">
+				<doc>Helpers who are no longer willing drop out gradually. Gap = current helpers - willing helpers, where willing helpers = starting helpers (INIT = 5) x Willingness To Help. 2 = weeks it takes an unwilling helper to stop turning up. MAX(0, ...) because helpers only leave through this flow.</doc>
+				<eqn>MAX(0, Number_of_Student_Helping - INIT(Number_of_Student_Helping) * Willingness_To_Help) / 2</eqn>
+				<non_negative/>
+				<units>students/Weeks</units>
+			</flow>
+			<flow name="Weekly Clear\nof\nUnattended Items">
+				<eqn>Time_to_Clean_up_Unattended_Items*Speed_to_Clean_up_items_in_Practice_Room</eqn>
+				<non_negative/>
+				<units>items/Weeks</units>
+			</flow>
+		</variables>
+		<views>
+			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+				<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:loop_indicator color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<numeric_display color="blue" background="white" font_size="9pt" isee:transparent="false"/>
+				<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+					<isee:series_styles>
+						<isee:series_style color="blue" thickness="1"/>
+						<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF7F00" thickness="1"/>
+						<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF007F" thickness="1"/>
+						<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#C8C8C8" thickness="1"/>
+					</isee:series_styles>
+				</graph>
+				<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				<button color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595"/>
+				<isee:annotation color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595" popup_corner_radius="0" popup_background_color="#FFFECF"/>
+				<slider color="#66CC66" background="#E0E0E0" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" vertical="false" isee:fancy_appearance="false" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:dual_slider color="#66CC66" background="silver" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:sim_speed_slider color="black" background="white"/>
+				<isee:time_slider color="#E95F74" background="silver"/>
+				<isee:pie_input color="black" background="white" font_size="12pt" legend_position="bottom" isee:transparent="false"/>
+				<knob color="#66CC66" background="#E0E0E0" font_size="12pt" label_side="bottom" wrap_title="true"/>
+				<numeric_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<switch color="black" background="#E0E0E0" font_size="12pt" label_side="top" wrap_title="true" isee:appearance="switch" isee:on_color="green"/>
+				<options color="black" background="white" appearance="radio-buttons" arrangement="vertical"/>
+				<graphical_input color="black" background="#E0E0E0" font_size="12pt" isee:show_hover_tip="true"/>
+				<group_input color="black" background="#E0E0E0" font_size="12pt"/>
+				<lamp color="black" background="white" font_size="9pt"/>
+				<gauge color="black" background="white" font_size="9pt" needle_color="#F09F72" bar_color="#EEEEEE" bar_progress_color="black" appearance="radial" num_major_ticks="11" num_minor_ticks="11" show_numeric_value="true"/>
+				<isee:spatial_map color="black" background="white" font_size="12pt"/>
+				<isee:animation_object color="black" background="white" font_size="12pt"/>
+				<isee:navigation_widget color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_color="#999999" border_width="thin" border_style="solid" item_spacing="6" appearance="tabs" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD"/>
+				<isee:shape color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid" opacity="1" transparent_background="true"/>
+				<isee:selector color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
+				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" hide_border="false" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+			</style>
+			<view isee:show_pages="false" background="white" page_width="1056" page_height="816" isee:page_cols="2" isee:page_rows="2" isee:popup_graphs_are_comparative="true" isee:enable_non_negative_highlights="false" type="stock_flow">
+				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="45" height="35"/>
+					</stock>
+					<flow color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom"/>
+					<isee:placeholder color="#228B22" background="white" font_color="#228B22" font_size="9pt" label_side="bottom"/>
+					<module color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="55" height="45"/>
+					</module>
+					<aux color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</aux>
+					<group color="red" background="white" font_color="red" font_size="9pt"/>
+					<connector color="#FF007F" background="white" font_color="#FF007F" font_size="9pt" isee:thickness="1"/>
+					<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<isee:loop_indicator color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<numeric_display color="blue" background="white" font_size="9pt" isee:transparent="false"/>
+					<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+						<isee:series_styles>
+							<isee:series_style color="blue" thickness="1"/>
+							<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF7F00" thickness="1"/>
+							<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF007F" thickness="1"/>
+							<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#C8C8C8" thickness="1"/>
+						</isee:series_styles>
+					</graph>
+					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				</style>
+				<stock label_side="top" x="261.773" y="96.5909" width="38.1818" height="29.5455" name="Convenience Per\nIndividual Group"/>
+				<flow label_side="left" label_angle="135" x="277.705" y="196.159" name="Availability of\nShared Inventory\nArea">
+					<pts>
+						<pt x="277.705" y="266.182"/>
+						<pt x="277.705" y="126.136"/>
+					</pts>
+				</flow>
+				<aux x="290.08" y="293.647" name="Capacity of Shared Inventory Area"/>
+				<connector uid="1" polarity="+" isee:polarity_placement="outside" angle="18.9543">
+					<from>Capacity_of_Shared_Inventory_Area</from>
+					<to>Availability_of_Shared_Inventory_Area</to>
+				</connector>
+				<stock x="494.045" y="126.068" width="38.6364" height="26.8182" name="Convenience for Symphony Orchestra"/>
+				<flow label_side="top" x="409.75" y="145.909" name="Growth of Convenience for Symphony Orchestra">
+					<pts>
+						<pt x="325.455" y="145.909"/>
+						<pt x="494.045" y="145.909"/>
+					</pts>
+				</flow>
+				<aux label_side="right" x="402.727" y="225" name="Symphony Orchestra's\nOccupancy\nfor Shared Inventory Area"/>
+				<connector uid="2" polarity="+" isee:polarity_placement="inside" angle="314.027">
+					<from>Convenience_for_Symphony_Orchestra</from>
+					<to>Symphony_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area</to>
+				</connector>
+				<connector uid="3" polarity="+" isee:polarity_placement="inside" angle="146.87">
+					<from>Symphony_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area</from>
+					<to>Growth_of_Convenience_for_Symphony_Orchestra</to>
+				</connector>
+				<stock x="33.5001" y="126.068" width="38.6364" height="26.8182" name="Convenience for\nChinese Orchestra"/>
+				<flow label_side="top" x="156.068" y="145.25" name="Growth of Convenience\nfor Chinese Orchestra">
+					<pts>
+						<pt x="240" y="145.25"/>
+						<pt x="72.1365" y="145.25"/>
+					</pts>
+				</flow>
+				<aux label_side="bottom" x="115.455" y="237.727" name="Chinese Orchestra's\nOccupancy\nfor Shared Inventory Area"/>
+				<connector uid="4" polarity="+" isee:polarity_placement="inside" angle="262.836">
+					<from>Convenience_for_Chinese_Orchestra</from>
+					<to>Chinese_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area</to>
+				</connector>
+				<connector uid="5" polarity="+" isee:polarity_placement="inside" angle="30.0686">
+					<from>Chinese_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area</from>
+					<to>Growth_of_Convenience_for_Chinese_Orchestra</to>
+				</connector>
+				<aux label_side="right" label_angle="315" x="223.977" y="388.455" name="Total Occupancy of Shared Inventory Area"/>
+				<connector uid="6" angle="204.748">
+					<from>Chinese_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area</from>
+					<to>Total_Occupancy_of_Shared_Inventory_Area</to>
+				</connector>
+				<connector uid="7" angle="260.474">
+					<from>Symphony_Orchestra&apos;s_Occupancy_for_Shared_Inventory_Area</from>
+					<to>Total_Occupancy_of_Shared_Inventory_Area</to>
+				</connector>
+				<connector uid="8" angle="147.625">
+					<from>Total_Occupancy_of_Shared_Inventory_Area</from>
+					<to>Availability_of_Shared_Inventory_Area</to>
+				</connector>
+				<aux x="665" y="161.886" name="Time to Clear the\nInventory Area"/>
+				<connector uid="9" polarity="-" isee:polarity_placement="inside" angle="23.3906">
+					<from>Convenience_Per_Individual_Group</from>
+					<to>Time_to_Clear_the_Inventory_Area</to>
+				</connector>
+				<aux x="720.455" y="99.7955" name="Speed to Clean up\nthe Items Inventory Area"/>
+				<connector uid="10" polarity="-" isee:polarity_placement="inside" angle="174.873">
+					<from>Speed_to_Clean_up_the_Items_Inventory_Area</from>
+					<to>Time_to_Clear_the_Inventory_Area</to>
+				</connector>
+				<aux label_side="left" x="539.557" y="325.83" width="25.9091" height="25.9091" name="Total Preparation Time"/>
+				<connector uid="12" polarity="+" isee:polarity_placement="outside" angle="192.937">
+					<from>Time_to_Clear_the_Inventory_Area</from>
+					<to>Total_Preparation_Time</to>
+				</connector>
+				<stock label_side="bottom" x="484.125" y="771.25" name="Items Left in the Room"/>
+				<flow label_side="left" label_angle="135" x="604.875" y="776" name="Weekly Growth of\nUnattended Items">
+					<pts>
+						<pt x="703.125" y="776"/>
+						<pt x="506.625" y="776"/>
+					</pts>
+				</flow>
+				<aux x="365.102" y="532.5" name="Desired Room Space"/>
+				<aux label_side="right" x="415.33" y="695.875" name="Room Space Capacity"/>
+				<aux label_side="right" label_angle="315" x="365.102" y="613.75" name="Current Room Space Available"/>
+				<connector uid="18" polarity="-" isee:polarity_placement="inside" angle="176.918">
+					<from>Items_Left_in_the_Room</from>
+					<to>Current_Room_Space_Available</to>
+				</connector>
+				<connector uid="19" polarity="+" isee:polarity_placement="inside" angle="152.94">
+					<from>Room_Space_Capacity</from>
+					<to>Current_Room_Space_Available</to>
+				</connector>
+				<aux label_side="bottom" x="488.125" y="581.875" name="Number of Items to be Cleaned up"/>
+				<connector uid="21" polarity="-" isee:polarity_placement="inside" angle="43.3387">
+					<from>Current_Room_Space_Available</from>
+					<to>Number_of_Items_to_be_Cleaned_up</to>
+				</connector>
+				<aux label_side="right" label_angle="45" x="138.068" y="631.75" name="Speed to Clean up\nitems in Practice Room"/>
+				<aux label_side="left" x="541.682" y="480.625" name="Time to Clean up\nUnattended Items"/>
+				<connector uid="22" polarity="-" isee:polarity_placement="inside" angle="84.1646">
+					<from>Speed_to_Clean_up_items_in_Practice_Room</from>
+					<to>Time_to_Clean_up_Unattended_Items</to>
+				</connector>
+				<connector uid="23" polarity="+" isee:polarity_placement="inside" angle="47.2906">
+					<from>Number_of_Items_to_be_Cleaned_up</from>
+					<to>Time_to_Clean_up_Unattended_Items</to>
+				</connector>
+				<connector uid="25" polarity="+" isee:polarity_placement="outside" angle="41.7218">
+					<from>Time_to_Clean_up_Unattended_Items</from>
+					<to>Total_Preparation_Time</to>
+				</connector>
+				<aux x="668.313" y="879.375" name="Room Usage Shortfall"/>
+				<aux label_side="top" x="586.25" y="649.75" name="Number of Items Used"/>
+				<connector uid="27" polarity="+" isee:polarity_placement="outside" angle="327.813">
+					<from>Number_of_Items_Used</from>
+					<to>Weekly_Growth_of_Unattended_Items</to>
+				</connector>
+				<connector uid="28" polarity="-" isee:polarity_placement="inside" angle="104.144">
+					<from>Room_Usage_Shortfall</from>
+					<to>Weekly_Growth_of_Unattended_Items</to>
+				</connector>
+				<connector uid="29" polarity="-" isee:polarity_placement="inside" angle="255.532">
+					<from>Speed_to_Clean_up_items_in_Practice_Room</from>
+					<to>Weekly_Growth_of_Unattended_Items</to>
+				</connector>
+				<aux x="668.313" y="326.75" name="Willingness To Help"/>
+				<connector uid="32" polarity="-" isee:polarity_placement="outside" angle="18.7621">
+					<from>Total_Preparation_Time</from>
+					<to>Willingness_To_Help</to>
+				</connector>
+				<stock label_side="right" label_angle="45" x="813.125" y="364.455" name="Number of\nStudent Helping"/>
+				<connector uid="34" polarity="-" isee:polarity_placement="outside" angle="71.5997">
+					<from>Number_of_Student_Helping</from>
+					<to>Time_to_Clear_the_Inventory_Area</to>
+				</connector>
+				<connector uid="35" polarity="-" isee:polarity_placement="outside" angle="290.893">
+					<from>Number_of_Student_Helping</from>
+					<to>Time_to_Clean_up_Unattended_Items</to>
+				</connector>
+				<connector uid="36" polarity="-" isee:polarity_placement="inside" angle="316.369">
+					<from>Number_of_Student_Helping</from>
+					<to>Weekly_Growth_of_Unattended_Items</to>
+				</connector>
+				<flow label_side="bottom" x="731.063" y="368.364" name="Decrease Rate of Student Helping">
+					<pts>
+						<pt x="790.625" y="368.364"/>
+						<pt x="647.5" y="368.364"/>
+					</pts>
+				</flow>
+				<connector uid="37" polarity="-" isee:polarity_placement="outside" angle="22.0951">
+					<from>Willingness_To_Help</from>
+					<to>Decrease_Rate_of_Student_Helping</to>
+				</connector>
+				<connector uid="38" angle="151.739">
+					<from>Number_of_Student_Helping</from>
+					<to>Decrease_Rate_of_Student_Helping</to>
+				</connector>
+				<isee:loop_indicator text="R1" orientation="counter_clockwise" uid="42" x="81.25" y="174.375" width="30" height="30"/>
+				<isee:loop_indicator text="B1" orientation="clockwise" uid="43" x="111.25" y="349.455" width="30" height="30"/>
+				<isee:loop_indicator text="R2" orientation="clockwise" uid="44" x="438.125" y="166.25" width="30" height="30"/>
+				<isee:loop_indicator text="B2" orientation="clockwise" uid="45" x="340.625" y="226.875" width="30" height="30"/>
+				<connector uid="46" polarity="+" isee:polarity_placement="inside" angle="175.961">
+					<from>Convenience_Per_Individual_Group</from>
+					<to>Growth_of_Convenience_for_Chinese_Orchestra</to>
+				</connector>
+				<connector uid="47" polarity="+" isee:polarity_placement="outside" angle="3.00471">
+					<from>Convenience_Per_Individual_Group</from>
+					<to>Growth_of_Convenience_for_Symphony_Orchestra</to>
+				</connector>
+				<stacked_container uid="48" x="1045" y="311.25" width="371.25" height="251.875">
+					<graph width="371.25" height="251.875" type="time_series" isee:points_only="false" show_grid="false" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="14" num_y_labels="6" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Total_Preparation_Time"/>
+						</plot>
+						<plot color="red" pen_style="dot_dashed" isee:keep_zero_visible="true" pen_width="1" index="1" show_y_axis="true">
+							<entity name="Time_to_Clear_the_Inventory_Area"/>
+						</plot>
+						<plot color="fuchsia" pen_style="dotted" isee:keep_zero_visible="true" pen_width="1" index="2" show_y_axis="true">
+							<entity name="Time_to_Clean_up_Unattended_Items"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<flow label_side="bottom" x="362.188" y="776" name="Weekly Clear\nof\nUnattended Items">
+					<pts>
+						<pt x="461.625" y="776"/>
+						<pt x="238.75" y="776"/>
+					</pts>
+				</flow>
+				<connector uid="20" polarity="+" isee:polarity_placement="outside" angle="10.9304">
+					<from>Desired_Room_Space</from>
+					<to>Number_of_Items_to_be_Cleaned_up</to>
+				</connector>
+				<connector uid="51" polarity="+" isee:polarity_placement="inside" angle="151.55">
+					<from>Time_to_Clean_up_Unattended_Items</from>
+					<to>Weekly_Clear_of_Unattended_Items</to>
+				</connector>
+				<connector uid="52" polarity="+" isee:polarity_placement="outside" angle="299.249">
+					<from>Speed_to_Clean_up_items_in_Practice_Room</from>
+					<to>Weekly_Clear_of_Unattended_Items</to>
+				</connector>
+				<isee:loop_indicator text="R4" orientation="clockwise" uid="53" x="662.063" y="457.352" width="30" height="30"/>
+				<isee:loop_indicator text="B3" orientation="clockwise" uid="55" x="692.063" y="663.125" width="30" height="30"/>
+				<isee:loop_indicator text="B4" orientation="counter_clockwise" uid="56" x="295.625" y="598.75" width="30" height="30"/>
+				<isee:loop_indicator text="R3" orientation="counter_clockwise" uid="57" x="681.455" y="251.25" width="30" height="30"/>
+				<stacked_container uid="58" x="1041.25" y="603.75" width="761.25" height="250">
+					<table width="761.25" height="250">
+						<item type="time"/>
+						<item>
+							<entity name="Total_Preparation_Time"/>
+						</item>
+						<item>
+							<entity name="Time_to_Clear_the_Inventory_Area"/>
+						</item>
+						<item>
+							<entity name="Time_to_Clean_up_Unattended_Items"/>
+						</item>
+					</table>
+				</stacked_container>
+				<stacked_container uid="60" x="1230.63" y="1075.63">
+					<table width="350" height="250">
+						<item type="time"/>
+						<item>
+							<entity name="Number_of_Student_Helping"/>
+						</item>
+					</table>
+				</stacked_container>
+				<stacked_container uid="61" x="1478" y="246.727" width="350" height="250">
+					<graph width="350" height="250" type="time_series" isee:points_only="false" show_grid="false" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="14" num_y_labels="9" isee:fill_intensity="0.1" isee:allow_zero_axis="true" left_axis_multi_scale="false" left_axis_auto_scale="true" left_include_units="true" right_axis_multi_scale="false" right_axis_auto_scale="true" right_include_units="true">
+						<plot color="blue" isee:keep_zero_visible="true" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Number_of_Student_Helping"/>
+						</plot>
+					</graph>
+				</stacked_container>
+			</view>
+			<view background="white" page_width="1066" page_height="600" home_view="true" type="interface">
+				<style/>
+			</view>
+			<isee:templates>
+				<view background="white" page_width="1066" page_height="600" type="template">
+					<style/>
+				</view>
+			</isee:templates>
+			<isee:stories/>
+		</views>
+	</model>
+</xmile>
+

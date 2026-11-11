@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xmile version="1.0" xmlns="http://docs.oasis-open.org/xmile/ns/XMILE/v1.0" xmlns:isee="http://iseesystems.com/XMILE">
+	<header>
+		<smile version="1.0" namespace="std, isee"/>
+		<name>CLD Simplified</name>
+		<uuid>584e9d6c-4467-4cef-95c9-c9859e8a6602</uuid>
+		<vendor>isee systems, inc.</vendor>
+		<product version="2.1.3" isee:build_number="2455" isee:saved_by_v1="true" lang="en">Stella Architect</product>
+	</header>
+	<sim_specs isee:sim_duration="1.5" isee:simulation_delay="0.125" isee:restore_on_start="false" method="Euler" time_units="Months" isee:instantaneous_flows="false" isee:loop_scores="true" isee:loop_exhaustive_allowed="1000">
+		<start>1</start>
+		<stop>13</stop>
+		<dt reciprocal="true">4</dt>
+	</sim_specs>
+	<isee:prefs show_module_prefix="true" live_update_on_drag="true" show_restore_buttons="false" layer="cld" interface_scale_ui="true" interface_max_page_width="10000" interface_max_page_height="10000" interface_min_page_width="0" interface_min_page_height="0" rerun_on_structure_change="false" saved_runs="5" keep="false" rifp="true"/>
+	<isee:multiplayer_settings include_chat="true" allow_observers="false" advance_time_increment="1" max_advance_time_in_ms="0" observer_start_page="home_page" enabled="false"/>
+	<isee:time_formats default_format="Builtin">
+		<isee:time_format name="Builtin" type="adaptive"/>
+	</isee:time_formats>
+	<default_format/>
+	<model_units/>
+	<model>
+		<variables>
+			<aux name="Chinese Orchestra's\nOccupancy of Inventory Area">
+				<eqn>NAN(Chinese_Orchestra&apos;s_Convenience)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Chinese Orchestra's\nConvenience">
+				<eqn>NAN(Chinese_Orchestra&apos;s_Occupancy_of_Inventory_Area,Convenience_Per_Individual_Group)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Symphony Orchestra's\nOccupancy of Inventory Area">
+				<eqn>NAN(Symphony_Orchestra&apos;s_Convenience)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Symphony Orchestra's\nConvenience">
+				<eqn>NAN(Symphony_Orchestra&apos;s_Occupancy_of_Inventory_Area,Convenience_Per_Individual_Group)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Total Occupancy\nof Shared Inventory Area">
+				<eqn>NAN(Chinese_Orchestra&apos;s_Occupancy_of_Inventory_Area,Symphony_Orchestra&apos;s_Occupancy_of_Inventory_Area)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Convenience Per\nIndividual Group">
+				<eqn>NAN(Availability_of_Shared_Inventory_Area)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Time to Clear the Inventory Area">
+				<eqn>NAN(Convenience_Per_Individual_Group,Number_of_Student_Helping)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Current Room\nSpace Available">
+				<eqn>NAN(Numbers_of_Items_Cleaned_up)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Desired Room Space">
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Needs to Clean up Unattended Items">
+				<eqn>NAN(Desired_Room_Space,Current_Room_Space_Available)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Numbers of Items\nCleaned up">
+				<eqn>NAN(Needs_to_Clean_up_Unattended_Items,Room_Usage_Shortfall,Number_of_Student_Helping)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Time to Clean up\nthe Practice Room">
+				<eqn>NAN(Numbers_of_Items_Cleaned_up,Number_of_Student_Helping)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Number of Student Helping">
+				<eqn>NAN(Willingness_to_Help)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Total Preparation Time">
+				<eqn>NAN(Time_to_Clear_the_Inventory_Area,Time_to_Clean_up_the_Practice_Room)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Willingness to Help">
+				<eqn>NAN(Total_Preparation_Time)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Availability of Shared Inventory Area">
+				<eqn>NAN(Total_Occupancy_of_Shared_Inventory_Area,Capacity_of_Shared_Inventory_Area)</eqn>
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Capacity of Shared Inventory Area">
+				<isee:delay_aux/>
+			</aux>
+			<aux name="Room Usage Shortfall">
+				<isee:delay_aux/>
+			</aux>
+		</variables>
+		<views>
+			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+				<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:loop_indicator color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<numeric_display color="blue" background="white" font_size="9pt" isee:transparent="false"/>
+				<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+					<isee:series_styles>
+						<isee:series_style color="blue" thickness="1"/>
+						<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF7F00" thickness="1"/>
+						<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF007F" thickness="1"/>
+						<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#C8C8C8" thickness="1"/>
+					</isee:series_styles>
+				</graph>
+				<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				<button color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595"/>
+				<isee:annotation color="black" background="#E0E0E0" font_size="12pt" border_width="thin" border_style="solid" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595" popup_corner_radius="0" popup_background_color="#FFFECF"/>
+				<slider color="#66CC66" background="#E0E0E0" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" vertical="false" isee:fancy_appearance="false" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:dual_slider color="#66CC66" background="silver" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:sim_speed_slider color="black" background="white"/>
+				<isee:time_slider color="#E95F74" background="silver"/>
+				<isee:pie_input color="black" background="white" font_size="12pt" legend_position="bottom" isee:transparent="false"/>
+				<knob color="#66CC66" background="#E0E0E0" font_size="12pt" label_side="bottom" wrap_title="true"/>
+				<numeric_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<switch color="black" background="#E0E0E0" font_size="12pt" label_side="top" wrap_title="true" isee:appearance="switch" isee:on_color="green"/>
+				<options color="black" background="white" appearance="radio-buttons" arrangement="vertical"/>
+				<graphical_input color="black" background="#E0E0E0" font_size="12pt" isee:show_hover_tip="true"/>
+				<group_input color="black" background="#E0E0E0" font_size="12pt"/>
+				<lamp color="black" background="white" font_size="9pt"/>
+				<gauge color="black" background="white" font_size="9pt" needle_color="#F09F72" bar_color="#EEEEEE" bar_progress_color="black" appearance="radial" num_major_ticks="11" num_minor_ticks="11" show_numeric_value="true"/>
+				<isee:spatial_map color="black" background="white" font_size="12pt"/>
+				<isee:animation_object color="black" background="white" font_size="12pt"/>
+				<isee:navigation_widget color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_color="#999999" border_width="thin" border_style="solid" item_spacing="6" appearance="tabs" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD"/>
+				<isee:shape color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid" opacity="1" transparent_background="true"/>
+				<isee:selector color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
+				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" hide_border="false" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+			</style>
+			<view isee:show_pages="false" background="white" isee:converter_size="name_only" page_width="1056" page_height="816" zoom="140" isee:popup_graphs_are_comparative="true" isee:enable_non_negative_highlights="false" type="stock_flow">
+				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="45" height="35"/>
+					</stock>
+					<flow color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom"/>
+					<isee:placeholder color="#228B22" background="white" font_color="#228B22" font_size="9pt" label_side="bottom"/>
+					<module color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="55" height="45"/>
+					</module>
+					<aux color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="name_only"/>
+					</aux>
+					<group color="red" background="white" font_color="red" font_size="9pt"/>
+					<connector color="#FF007F" background="white" font_color="#FF007F" font_size="9pt" isee:thickness="1"/>
+					<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<isee:loop_indicator color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<numeric_display color="blue" background="white" font_size="9pt" isee:transparent="false"/>
+					<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+						<isee:series_styles>
+							<isee:series_style color="blue" thickness="1"/>
+							<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF7F00" thickness="1"/>
+							<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF007F" thickness="1"/>
+							<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#C8C8C8" thickness="1"/>
+						</isee:series_styles>
+					</graph>
+					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				</style>
+				<aux x="91.196" y="44.6607" width="132.25" height="30" name="Chinese Orchestra's\nOccupancy of Inventory Area"/>
+				<aux x="318.321" y="44.6607" width="91.25" height="30" name="Chinese Orchestra's\nConvenience">
+					<shape type="name_only"/>
+				</aux>
+				<connector uid="1" polarity="+" isee:polarity_placement="outside" angle="43.5742">
+					<from>Chinese_Orchestra&apos;s_Occupancy_of_Inventory_Area</from>
+					<to>Chinese_Orchestra&apos;s_Convenience</to>
+				</connector>
+				<connector uid="2" polarity="+" isee:polarity_placement="outside" angle="222.778">
+					<from>Chinese_Orchestra&apos;s_Convenience</from>
+					<to>Chinese_Orchestra&apos;s_Occupancy_of_Inventory_Area</to>
+				</connector>
+				<aux x="118.339" y="264.661" width="132.25" height="30" name="Symphony Orchestra's\nOccupancy of Inventory Area">
+					<shape type="name_only"/>
+				</aux>
+				<aux x="339.464" y="264.661" width="103.25" height="30" name="Symphony Orchestra's\nConvenience">
+					<shape type="name_only"/>
+				</aux>
+				<connector uid="3" polarity="+" isee:polarity_placement="outside" angle="43.5742">
+					<from>Symphony_Orchestra&apos;s_Occupancy_of_Inventory_Area</from>
+					<to>Symphony_Orchestra&apos;s_Convenience</to>
+				</connector>
+				<connector uid="4" polarity="+" isee:polarity_placement="outside" angle="222.778">
+					<from>Symphony_Orchestra&apos;s_Convenience</from>
+					<to>Symphony_Orchestra&apos;s_Occupancy_of_Inventory_Area</to>
+				</connector>
+				<aux x="11.2321" y="174.286" width="113.25" height="30" name="Total Occupancy\nof Shared Inventory Area"/>
+				<connector uid="5" polarity="+" isee:polarity_placement="outside" angle="199.284">
+					<from>Chinese_Orchestra&apos;s_Occupancy_of_Inventory_Area</from>
+					<to>Total_Occupancy_of_Shared_Inventory_Area</to>
+				</connector>
+				<connector uid="6" polarity="+" isee:polarity_placement="outside" angle="182.744">
+					<from>Symphony_Orchestra&apos;s_Occupancy_of_Inventory_Area</from>
+					<to>Total_Occupancy_of_Shared_Inventory_Area</to>
+				</connector>
+				<aux x="435.875" y="166.429" width="78.25" height="30" name="Convenience Per\nIndividual Group"/>
+				<connector uid="7" polarity="+" isee:polarity_placement="outside" angle="85.7636">
+					<from>Convenience_Per_Individual_Group</from>
+					<to>Chinese_Orchestra&apos;s_Convenience</to>
+				</connector>
+				<connector uid="8" polarity="+" isee:polarity_placement="outside" angle="280.491">
+					<from>Convenience_Per_Individual_Group</from>
+					<to>Symphony_Orchestra&apos;s_Convenience</to>
+				</connector>
+				<aux x="570.875" y="204.286" width="78.25" height="30" name="Time to Clear the Inventory Area"/>
+				<connector uid="10" polarity="-" isee:polarity_placement="outside" angle="7.37377">
+					<from>Convenience_Per_Individual_Group</from>
+					<to>Time_to_Clear_the_Inventory_Area</to>
+				</connector>
+				<aux x="29.0893" y="491.428" width="73.25" height="30" name="Current Room\nSpace Available"/>
+				<aux x="38.8036" y="376.285" width="95.25" height="16" name="Desired Room Space"/>
+				<aux x="198.714" y="424.285" width="84.25" height="30" name="Needs to Clean up Unattended Items"/>
+				<connector uid="11" polarity="+" isee:polarity_placement="outside" angle="6.45882">
+					<from>Desired_Room_Space</from>
+					<to>Needs_to_Clean_up_Unattended_Items</to>
+				</connector>
+				<connector uid="12" polarity="-" isee:polarity_placement="outside" angle="53.1301">
+					<from>Current_Room_Space_Available</from>
+					<to>Needs_to_Clean_up_Unattended_Items</to>
+				</connector>
+				<aux x="249.214" y="522.142" width="83.25" height="30" name="Numbers of Items\nCleaned up"/>
+				<connector uid="13" polarity="+" isee:polarity_placement="outside" angle="323.293">
+					<from>Needs_to_Clean_up_Unattended_Items</from>
+					<to>Numbers_of_Items_Cleaned_up</to>
+				</connector>
+				<connector uid="14" polarity="+" isee:polarity_placement="outside" angle="246.768">
+					<from>Numbers_of_Items_Cleaned_up</from>
+					<to>Current_Room_Space_Available</to>
+				</connector>
+				<aux x="400.714" y="466.428" width="84.25" height="30" name="Time to Clean up\nthe Practice Room"/>
+				<connector uid="15" polarity="+" isee:polarity_placement="outside" angle="40.0946">
+					<from>Numbers_of_Items_Cleaned_up</from>
+					<to>Time_to_Clean_up_the_Practice_Room</to>
+				</connector>
+				<aux x="527.107" y="596.143" width="120.25" height="16" name="Number of Student Helping"/>
+				<connector uid="16" polarity="-" isee:polarity_placement="outside" angle="171.35">
+					<from>Number_of_Student_Helping</from>
+					<to>Time_to_Clean_up_the_Practice_Room</to>
+				</connector>
+				<aux x="490.16" y="400.143" width="98.25" height="16" name="Total Preparation Time"/>
+				<aux x="619.535" y="499.142" width="86.25" height="16" name="Willingness to Help"/>
+				<connector uid="18" polarity="+" isee:polarity_placement="inside" angle="274.054">
+					<from>Willingness_to_Help</from>
+					<to>Number_of_Student_Helping</to>
+				</connector>
+				<connector uid="19" polarity="+" isee:polarity_placement="outside" angle="274.764">
+					<from>Time_to_Clear_the_Inventory_Area</from>
+					<to>Total_Preparation_Time</to>
+				</connector>
+				<connector uid="20" polarity="+" isee:polarity_placement="outside" angle="77.9813">
+					<from>Time_to_Clean_up_the_Practice_Room</from>
+					<to>Total_Preparation_Time</to>
+				</connector>
+				<aux x="198.071" y="160" width="101.25" height="30" name="Availability of Shared Inventory Area"/>
+				<connector uid="21" polarity="-" isee:polarity_placement="outside" angle="25.2013">
+					<from>Total_Occupancy_of_Shared_Inventory_Area</from>
+					<to>Availability_of_Shared_Inventory_Area</to>
+				</connector>
+				<connector uid="22" polarity="+" isee:polarity_placement="outside" delay_mark="true" angle="18.9691">
+					<from>Availability_of_Shared_Inventory_Area</from>
+					<to>Convenience_Per_Individual_Group</to>
+				</connector>
+				<aux x="125.482" y="100.714" width="88.25" height="30" name="Capacity of Shared Inventory Area"/>
+				<connector uid="23" polarity="+" isee:polarity_placement="outside" angle="344.289">
+					<from>Capacity_of_Shared_Inventory_Area</from>
+					<to>Availability_of_Shared_Inventory_Area</to>
+				</connector>
+				<isee:loop_indicator text="R1" orientation="clockwise" uid="25" x="230.732" y="52.8571" width="30" height="30"/>
+				<isee:loop_indicator text="R2" orientation="clockwise" uid="26" x="247.732" y="259.857" width="30" height="30"/>
+				<isee:loop_indicator text="B1" orientation="counter_clockwise" uid="27" x="349.732" y="94.8571" width="30" height="30"/>
+				<isee:loop_indicator text="B2" orientation="clockwise" uid="28" x="358.732" y="190.857" width="30" height="30"/>
+				<isee:loop_indicator text="R4" orientation="clockwise" uid="29" x="540.875" y="454.285" width="30" height="30"/>
+				<isee:loop_indicator text="B3" orientation="clockwise" uid="30" x="376.089" y="540.714" width="30" height="30"/>
+				<isee:loop_indicator text="B4" orientation="clockwise" uid="31" x="200.732" y="492.142" width="30" height="30"/>
+				<aux x="209.089" y="646.286" width="99.25" height="16" name="Room Usage Shortfall"/>
+				<connector uid="32" polarity="+" isee:polarity_placement="outside" angle="62.7148">
+					<from>Room_Usage_Shortfall</from>
+					<to>Numbers_of_Items_Cleaned_up</to>
+				</connector>
+				<connector uid="33" polarity="+" isee:polarity_placement="outside" angle="190.481">
+					<from>Number_of_Student_Helping</from>
+					<to>Numbers_of_Items_Cleaned_up</to>
+				</connector>
+				<connector uid="35" polarity="-" isee:polarity_placement="inside" angle="356.618">
+					<from>Total_Preparation_Time</from>
+					<to>Willingness_to_Help</to>
+				</connector>
+				<connector uid="36" polarity="-" isee:polarity_placement="outside" angle="0.867307">
+					<from>Number_of_Student_Helping</from>
+					<to>Time_to_Clear_the_Inventory_Area</to>
+				</connector>
+				<isee:loop_indicator text="R3" orientation="clockwise" uid="37" x="682.857" y="386.714" width="30" height="30"/>
+			</view>
+		</views>
+	</model>
+</xmile>
+
